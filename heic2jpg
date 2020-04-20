@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# brew install imagemagick
+
+# Check if directory contains HEIC files
+HEIC_COUNT=$(ls | grep -i -c ".heic")
+
+if [[ ${HEIC_COUNT} -le 0 ]]; then
+    echo "No HEIC-files to convert in this directory"
+    exit 0
+fi
+
+if [[ $1 == "-r" ]]; then
+    for heic in $(ls | grep -i ".heic"); do
+        new_filename=$(echo $heic| sed "s/.HEIC/.jpg/")
+
+        echo "Converting $heic to $new_filename"
+        magick convert $heic $new_filename
+
+        rm $heic
+    done
+else
+    # Convert all files but don't remove the origin files
+    magick mogrify -monitor -format jpg *.HEIC
+fi
